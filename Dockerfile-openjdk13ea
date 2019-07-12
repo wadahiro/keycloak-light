@@ -5,7 +5,6 @@ RUN jlink \
   --no-header-files \
   --no-man-pages \
   --compress=2 \
-  --strip-debug \
   --vm=server \
   --exclude-files="**/bin/rmiregistry,**/bin/jrunscript,**/bin/rmid" \
   --add-modules java.base,java.instrument,java.logging,java.management,java.naming,java.scripting,java.se,java.security.jgss,java.security.sasl,java.sql,java.transaction.xa,java.xml,java.xml.crypto,jdk.security.auth,jdk.xml.dom,jdk.unsupported \
