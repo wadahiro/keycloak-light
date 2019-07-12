@@ -1,0 +1,30 @@
+FROM wadahiro/cl4cds as cl4cds
+
+FROM wadahiro/keycloak as kc
+
+FROM wadahiro/openjdk13ea
+
+COPY --from=kc --chown=1000:1000 /opt/jboss /opt/jboss
+
+ENV JBOSS_HOME /opt/jboss/keycloak
+ENV PROXY_ADDRESS_FORWARDING false
+
+RUN mkdir -p /javasharedresources && chown 1000.1000 /javasharedresources
+USER 1000
+
+COPY --from=cl4cds /cl4cds/src/classes/*.jar /opt/cl4cds.jar
+
+RUN env PREPEND_JAVA_OPTS="-Xlog:class+load=debug:file=/javasharedresources/keycloak.classtrace" /bin/sh -c '/opt/jboss/keycloak/bin/standalone.sh &' ; sleep 60 ; ps aux | grep java | grep -v grep | awk '{print $1}' | xargs kill -1
+
+RUN java -jar /opt/cl4cds.jar /javasharedresources/keycloak.classtrace /javasharedresources/keycloak.cls
+
+RUN env JAVA_TOOL_OPTIONS="-Xshare:dump -XX:SharedClassListFile=/javasharedresources/keycloak.cls -XX:SharedArchiveFile=/javasharedresources/archive.jsa" /opt/jboss/keycloak/bin/standalone.sh
+
+ENV JAVA_TOOL_OPTIONS="-XX:SharedArchiveFile=/javasharedresources/archive.jsa -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+
+EXPOSE 8080
+EXPOSE 8443
+
+ENTRYPOINT [ "/opt/jboss/keycloak/bin/standalone.sh" ]
+CMD ["-b", "0.0.0.0"]
+
