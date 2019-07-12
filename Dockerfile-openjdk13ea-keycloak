@@ -17,7 +17,13 @@ ENV PROXY_ADDRESS_FORWARDING false
 RUN mkdir -p /javasharedresources && chown 1000.1000 /javasharedresources
 USER 1000
 
-ENV JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+ENV JAVA_TOOL_OPTIONS="-Xshare:off -XX:DumpLoadedClassList=/javasharedresources/classes.txt"
+RUN /bin/sh -c '/opt/jboss/keycloak/bin/standalone.sh &' ; sleep 60 ; ps aux | grep java | grep -v grep | awk '{print $1}' | xargs kill -1
+
+ENV JAVA_TOOL_OPTIONS="-Xshare:dump -XX:SharedClassListFile=/javasharedresources/classes.txt -XX:SharedArchiveFile=/javasharedresources/archive.jsa"
+RUN /bin/sh -c '/opt/jboss/keycloak/bin/standalone.sh &' ; sleep 30 ; ps aux | grep java | grep -v grep | awk '{print $1}' | xargs kill -1
+
+ENV JAVA_TOOL_OPTIONS="-XX:SharedArchiveFile=/javasharedresources/archive.jsa -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
 EXPOSE 8080
 EXPOSE 8443
