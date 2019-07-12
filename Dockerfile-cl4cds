@@ -1,7 +1,11 @@
-FROM maven:3.6.1-jdk-11 as builder
+FROM maven:3.6.1-jdk-11
 
-RUN git clone https://github.com/wadahiro/cl4cds.git \
-RUN cd cl4cds \
-  && git checkout add-maven-build \
-  && mvn package
+RUN git clone https://github.com/wadahiro/cl4cds.git
+
+WORKDIR /cl4cds/src/classes
+
+RUN javac io/simonis/cl4cds.java
+RUN rm io/simonis/cl4cds.java
+RUN echo "Main-Class: io.simonis.cl4cds" > main.txt
+RUN jar cmf main.txt cl4cds.jar io
 
