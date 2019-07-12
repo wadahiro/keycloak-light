@@ -1,6 +1,8 @@
 #!/bin/sh
 
 # Base images
+docker build -f Dockerfile-openjdk12 -t wadahiro/openjdk12 .
+docker build -f Dockerfile-openjdk13ea -t wadahiro/openjdk13ea .
 docker build -f Dockerfile-openjdk12-openj9 -t wadahiro/openjdk12-openj9 .
 
 # Keycloak images
