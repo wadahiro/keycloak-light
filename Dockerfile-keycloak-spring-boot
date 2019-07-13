@@ -1,0 +1,11 @@
+FROM maven:3.6.1-jdk-11
+
+WORKDIR /build
+RUN git clone https://github.com/wadahiro/spring-boot-keycloak-server-example.git
+
+WORKDIR /build/spring-boot-keycloak-server-example
+RUN git checkout custom
+RUN mvn package
+RUN mvn package -Pundertow
+RUN mvn package -Pjetty
+
