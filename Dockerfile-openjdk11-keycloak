@@ -1,6 +1,6 @@
 FROM wadahiro/keycloak as kc
 
-FROM wadahiro/openjdk13ea
+FROM wadahiro/openjdk11
 
 COPY --from=kc --chown=1000:1000 /opt/jboss /opt/jboss
 

@@ -1,6 +1,6 @@
 FROM wadahiro/cl4cds as cl4cds
 
-FROM wadahiro/openjdk12-keycloak
+FROM wadahiro/openjdk11-keycloak
 
 USER root
 RUN mkdir -p /javasharedresources && chown 1000:1000 /javasharedresources

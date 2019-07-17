@@ -1,29 +1,18 @@
+FROM wadahiro/keycloak as kc
+
 FROM wadahiro/openjdk12-openj9
 
-# Copy from https://github.com/jboss-dockerfiles/keycloak/blob/6.0.1/server/Dockerfile
-ENV KEYCLOAK_VERSION 6.0.1
-ARG KEYCLOAK_DIST=https://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-$KEYCLOAK_VERSION.tar.gz
-
-RUN apk add --no-cache --virtual .build-deps curl \
-    && mkdir -p /opt/jboss \
-    && cd /opt/jboss/ \
-    && curl -L $KEYCLOAK_DIST | tar zx \
-    && mv /opt/jboss/keycloak-?.?.?* /opt/jboss/keycloak \
-    && apk del --purge .build-deps
+COPY --from=kc --chown=1000:1000 /opt/jboss /opt/jboss
 
 ENV JBOSS_HOME /opt/jboss/keycloak
 ENV PROXY_ADDRESS_FORWARDING false
-
-RUN mkdir -p /javasharedresources && chown 1000.1000 /javasharedresources
-USER 1000
-
-ENV JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xscmx30M -Xshareclasses:name=keycloak"
-RUN /bin/sh -c '/opt/jboss/keycloak/bin/standalone.sh &' ; sleep 60 ; ps aux | grep java | grep -v grep | awk '{print $1}' | xargs kill -1
 
 ENV JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xquickstart"
 
 EXPOSE 8080
 EXPOSE 8443
+
+USER 1000
 
 ENTRYPOINT [ "/opt/jboss/keycloak/bin/standalone.sh" ]
 CMD ["-b", "0.0.0.0"]
