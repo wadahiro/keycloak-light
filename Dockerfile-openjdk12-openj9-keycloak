@@ -7,7 +7,7 @@ COPY --from=kc --chown=1000:1000 /opt/jboss /opt/jboss
 ENV JBOSS_HOME /opt/jboss/keycloak
 ENV PROXY_ADDRESS_FORWARDING false
 
-ENV JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xquickstart"
+ENV JAVA_TOOL_OPTIONS="-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport -XX:+IdleTuningCompactOnIdle -XX:+IdleTuningGcOnIdle -Xquickstart"
 
 EXPOSE 8080
 EXPOSE 8443
