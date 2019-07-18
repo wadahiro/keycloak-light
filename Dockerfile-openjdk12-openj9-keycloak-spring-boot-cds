@@ -8,7 +8,8 @@ USER root
 RUN mkdir -p /javasharedresources && chown 1000:1000 /javasharedresources 
 USER 1000
 
-RUN env PREPEND_JAVA_OPTS="-Xscmx30M -Xshareclasses:name=keycloak" /bin/sh -c 'java -jar /opt/keycloak.jar &' ; sleep 60 ; ps aux | grep java | grep -v grep | awk '{print $1}' | xargs kill -1
+ENV JAVA_TOOL_OPTIONS="-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport -XX:+IdleTuningCompactOnIdle -XX:+IdleTuningGcOnIdle -Xscmx60M -Xshareclasses:name=keycloak -Xquickstart"
 
-ENV JAVA_TOOL_OPTIONS="-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport -XX:+IdleTuningCompactOnIdle -XX:+IdleTuningGcOnIdle -Xscmx30M -Xshareclasses:name=keycloak -Xquickstart"
+RUN /bin/sh -c 'java -jar /opt/keycloak.jar &' ; sleep 60 ; ps aux | grep java | grep -v grep | awk '{print $1}' | xargs kill -1
+
 
