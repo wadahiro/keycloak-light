@@ -16,8 +16,6 @@ RUN env JAVA_TOOL_OPTIONS="-Xshare:dump -XX:SharedClassListFile=/javasharedresou
 
 ENV JAVA_TOOL_OPTIONS="-XX:SharedArchiveFile=/javasharedresources/archive.jsa -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
-ENV JAVA_TOOL_OPTIONS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
-
 EXPOSE 8080
 EXPOSE 8443
 
