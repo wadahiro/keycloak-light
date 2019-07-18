@@ -1,0 +1,9 @@
+FROM jboss/keycloak:6.0.1
+
+RUN /bin/sh -c '/opt/jboss/keycloak/bin/standalone.sh &' ; sleep 60 ; ps aux | grep java | grep -v grep | awk '{print $2}' | xargs kill -1
+
+ENV JAVA_TOOL_OPTIONS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+
+ENTRYPOINT [ "/opt/jboss/keycloak/bin/standalone.sh" ]
+CMD ["-b", "0.0.0.0"]
+

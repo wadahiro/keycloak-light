@@ -1,0 +1,21 @@
+FROM wadahiro/keycloak-spring-boot as kc
+
+FROM wadahiro/openjdk13ea
+
+ARG JAR=spring-boot-keycloak-server-example-undertow-0.0.9.BUILD-SNAPSHOT.jar 
+
+COPY --from=kc --chown=1000:1000 /build/spring-boot-keycloak-server-example/target/$JAR /opt/keycloak.jar
+
+RUN mkdir -p /data && chown 1000:1000 /data
+
+ENV JAVA_TOOL_OPTIONS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+
+EXPOSE 8080
+EXPOSE 8443
+
+USER 1000
+
+RUN /bin/sh -c 'java -jar /opt/keycloak.jar &' ; sleep 60 ; ps aux | grep java | grep -v grep | awk '{print $1}' | xargs kill -1
+
+ENTRYPOINT [ "java", "-jar", "/opt/keycloak.jar" ]
+
